@@ -1,0 +1,27 @@
+PortSystem 1.0
+
+name					sphinx-client
+version					1.10-beta
+distname				sphinx-${version}
+categories				textproc net
+
+platforms				darwin
+description				Sphinx searchd client API library
+long_description		libsphinxclient is the client API library (in C) \
+						used to connect to the Sphinx search deamon.
+
+homepage				http://www.sphinxsearch.com/
+master_sites			${homepage}downloads/
+checksums				md5 5b52ce9e93a73c66d37bc3a2402f14fa
+
+configure.args			--prefix=${prefix} \
+						--enable-id64
+
+configure.env			CXXCPP="${configure.cc} -E"
+use_parallel_build		no
+
+worksrcdir				${worksrcdir}/api/libsphinxclient
+
+livecheck.type			regex
+livecheck.url			http://www.sphinxsearch.com/downloads.html
+livecheck.regex			{sphinx-(\d+(?:\.\d+)*).tar.gz}

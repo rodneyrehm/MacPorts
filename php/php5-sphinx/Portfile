@@ -1,0 +1,16 @@
+PortSystem              1.0
+PortGroup               php5extension 1.0
+
+php5extension.setup     sphinx 1.1.0 pecl
+revision                1
+categories-append       net devel
+platforms               darwin freebsd openbsd
+
+description             Client extension for Sphinx - opensource SQL full-text search engine
+long_description        This extension provides bindings for libsphinxclient, client library for Sphinx.
+
+checksums   md5 8997229134fabb77b224ec7507965347
+
+configure.args-append --with-sphinx=${prefix}
+
+depends_lib-append      port:sphinx-client
