@@ -3,6 +3,7 @@ PortSystem 1.0
 name			   		sphinx
 version			   		1.10-beta
 categories		   		textproc net
+revision				1
 
 platforms		   		darwin
 description		   		Sphinx is a full-text search engine
@@ -15,8 +16,12 @@ long_description   		Sphinx is a full-text search engine, meant to provide \
 				   		MySQL or PostgreSQL, or from an XML pipe.
 
 homepage		   		http://www.sphinxsearch.com/
-master_sites	   		${homepage}downloads/
-checksums		   		md5 5b52ce9e93a73c66d37bc3a2402f14fa
+master_sites	   		${homepage}downloads/::sphinx
+distfiles				${distname}${extract.suffix}:sphinx
+
+checksums		   		${distname}${extract.suffix} \
+						  md5 5b52ce9e93a73c66d37bc3a2402f14fa
+						
 
 depends_lib		   		port:expat \
 				   		port:libiconv
@@ -32,6 +37,26 @@ test.run				yes
 
 startupitem.create		yes
 startupitem.executable	${prefix}/bin/searchd -c ${prefix}/etc/sphinx/sphinx.conf
+
+pre-configure {
+	if {[variant_isset libstemmer]} {
+		# copy sphinx specific stuff
+		eval xinstall -m 640 [glob ${worksrcpath}/libstemmer_c/*] \
+		   ${workpath}/libstemmer_c/
+		# move to sphinx
+		move ${worksrcpath}/libstemmer_c/ ${worksrcpath}/libstemmer_c.previous/
+		move ${workpath}/libstemmer_c/ ${worksrcpath}/libstemmer_c/
+	}
+}
+
+variant libstemmer description {Enable snowball libstemmer support} {
+#	depends_lib-append		port:postgresql82
+	configure.args-append	--with-libstemmer
+	master_sites-append		http://snowball.tartarus.org/dist:libstemmer
+	distfiles-append		libstemmer_c.tgz:libstemmer
+	checksums-append		libstemmer_c.tgz \
+							  md5 e6418835f9a44328ecf3d08fa2adc5d4
+}
 
 variant postgres conflicts postgresql83 postgresql84 description {Enable PostgreSQL support for old PgSQL 8.2} {
 	depends_lib-append		port:postgresql82
